@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBook - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js from Official CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span class="logo-icon">🏥</span>
+            <span>MediBook</span>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="patient.html">Patient Portal</a>
+            <a href="doctor.html">Doctor Portal</a>
+            <a href="admin.html" class="active">Admin Dashboard</a>
+            <span id="nav-user-container"></span>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Header -->
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>📊 Hospital Analytics & Administration</h1>
+                <p>Monitor patient booking volume, department workloads, and hospital operations.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadAdminStats()">
+                🔄 Refresh Metrics
+            </button>
+        </div>
+
+        <!-- KPI SUMMARY METRIC CARDS -->
+        <div class="grid-4" style="margin-bottom: 1.5rem;">
+            <div class="stat-card">
+                <div class="stat-title">Total Bookings</div>
+                <div id="stat-total" class="stat-value">--</div>
+                <div class="stat-sub">Across all departments</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">No-Show Rate</div>
+                <div id="stat-noshow" class="stat-value" style="color: #f59e0b;">--</div>
+                <div id="stat-noshow-sub" class="stat-sub">Missed consultations</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Busiest Day</div>
+                <div id="stat-busiest" class="stat-value" style="color: #0284c7; font-size: 1.6rem; text-transform: capitalize;">--</div>
+                <div id="stat-busiest-sub" class="stat-sub">Peak appointment day</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Confirmed Volume</div>
+                <div id="stat-confirmed" class="stat-value" style="color: #10b981;">--</div>
+                <div id="stat-confirmed-sub" class="stat-sub">Active patient visits</div>
+            </div>
+        </div>
+
+        <!-- VISUAL ANALYTICS: BAR CHART -->
+        <div class="card">
+            <div class="card-title">
+                <span>Bookings per Department (Live Analytics)</span>
+                <span class="badge" style="background: #e0f2fe; color: #0369a1;">CHART.JS</span>
+            </div>
+            <div style="position: relative; height: 320px; width: 100%;">
+                <canvas id="departmentChart"></canvas>
+            </div>
+        </div>
+
+        <!-- DEPARTMENT BREAKDOWN TABLE -->
+        <div class="card">
+            <h2 class="card-title">Department Workload Breakdown</h2>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Total Appointments</th>
+                            <th>Share of Total Hospital Volume</th>
+                            <th>Status Indicator</th>
+                        </tr>
+                    </thead>
+                    <tbody id="department-table-tbody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #94a3b8; padding: 2rem;">
+                                Loading department statistics...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>MediBook Cloud Computing Project • AWS us-east-1</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

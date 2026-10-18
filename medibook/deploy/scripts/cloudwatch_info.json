@@ -1,0 +1,6 @@
+{
+  "TopicArn": "arn:aws:sns:us-east-1:355628740179:medibook-alarms-topic",
+  "AlarmName": "MediBook-Lambda-Error-Alarm",
+  "AlarmEmail": "rabbiraz123@gmail.com",
+  "MonitoredFunction": "medibook-book-appointment"
+}

@@ -1,0 +1,59 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBTableAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-1:355628740179:table/Appointments",
+        "arn:aws:dynamodb:us-east-1:355628740179:table/Doctors",
+        "arn:aws:dynamodb:us-east-1:355628740179:table/Patients"
+      ]
+    },
+    {
+      "Sid": "S3ReferralsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::medibook-referrals-40179-app/*"
+    },
+    {
+      "Sid": "SQSQueueAccess",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:SendMessage",
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"
+      ],
+      "Resource": "arn:aws:sqs:us-east-1:355628740179:medibook-booking-events"
+    },
+    {
+      "Sid": "SESSendEmailAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CognitoGroupAssignment",
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:AdminAddUserToGroup"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

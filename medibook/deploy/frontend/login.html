@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBook - Login & Registration</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span class="logo-icon">🏥</span>
+            <span>MediBook</span>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="patient.html">Patient Portal</a>
+            <a href="doctor.html">Doctor Portal</a>
+            <a href="admin.html">Admin Dashboard</a>
+        </nav>
+    </header>
+
+    <main class="container" style="max-width: 520px;">
+        <div class="card" style="margin-top: 2rem;">
+            <!-- Tab Buttons -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
+                <button id="tab-btn-signin" class="btn btn-primary btn-sm" onclick="showTab('signin')">Sign In</button>
+                <button id="tab-btn-signup" class="btn btn-secondary btn-sm" onclick="showTab('signup')">Register (Patient)</button>
+                <button id="tab-btn-confirm" class="btn btn-secondary btn-sm" onclick="showTab('confirm')">Verify Code</button>
+            </div>
+
+            <!-- Message Alert Banner -->
+            <div id="alert-box" class="alert" style="display: none;"></div>
+
+            <!-- Quick Demo Accounts Helper -->
+            <div style="background: #f0f9ff; border-radius: 8px; padding: 0.85rem; margin-bottom: 1.25rem; border: 1px solid #bae6fd;">
+                <strong style="color: #0369a1; font-size: 0.85rem;">⚡ Quick Fill Test Accounts:</strong>
+                <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fillTestAccount('patient@medibook.com', 'Password123!')">Patient</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fillTestAccount('doctor@medibook.com', 'Password123!')">Doctor</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fillTestAccount('admin@medibook.com', 'Password123!')">Admin</button>
+                </div>
+            </div>
+
+            <!-- 1. SIGN IN FORM -->
+            <div id="section-signin">
+                <h2 style="font-size: 1.4rem; color: #0f172a; margin-bottom: 0.5rem;">Sign In to MediBook</h2>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.25rem;">
+                    Access your appointments, medical records, or hospital dashboards.
+                </p>
+
+                <form id="form-signin" onsubmit="handleSignIn(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="signin-email">Email Address</label>
+                        <input type="email" id="signin-email" class="form-control" placeholder="patient@medibook.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="signin-password">Password</label>
+                        <input type="password" id="signin-password" class="form-control" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="submit" id="btn-submit-signin" class="btn btn-primary btn-block">Sign In</button>
+                </form>
+
+                <div style="margin-top: 1.25rem; font-size: 0.85rem; color: #64748b; text-align: center;">
+                    New patient? <a href="javascript:void(0)" onclick="showTab('signup')" style="color: #0284c7; font-weight: 600;">Create an account</a>
+                </div>
+            </div>
+
+            <!-- 2. SIGN UP FORM -->
+            <div id="section-signup" style="display: none;">
+                <h2 style="font-size: 1.4rem; color: #0f172a; margin-bottom: 0.5rem;">Create Patient Account</h2>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.25rem;">
+                    Register as a new hospital patient. You will be sent a 6-digit confirmation code.
+                </p>
+
+                <form id="form-signup" onsubmit="handleSignUp(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" class="form-control" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" class="form-control" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-control" placeholder="At least 8 characters with 1 number" required>
+                        <small style="color: #64748b; font-size: 0.8rem;">Min 8 characters (uppercase, lowercase, number recommended)</small>
+                    </div>
+
+                    <button type="submit" id="btn-submit-signup" class="btn btn-primary btn-block">Register</button>
+                </form>
+
+                <div style="margin-top: 1.25rem; font-size: 0.85rem; color: #64748b; text-align: center;">
+                    Already registered? <a href="javascript:void(0)" onclick="showTab('signin')" style="color: #0284c7; font-weight: 600;">Sign in here</a>
+                </div>
+            </div>
+
+            <!-- 3. CONFIRM SIGN UP FORM -->
+            <div id="section-confirm" style="display: none;">
+                <h2 style="font-size: 1.4rem; color: #0f172a; margin-bottom: 0.5rem;">Verify Your Account</h2>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.25rem;">
+                    Enter the 6-digit verification code sent to your email address by Amazon Cognito.
+                </p>
+
+                <form id="form-confirm" onsubmit="handleConfirmSignUp(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-email">Email Address</label>
+                        <input type="email" id="confirm-email" class="form-control" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-code">6-Digit Verification Code</label>
+                        <input type="text" id="confirm-code" class="form-control" placeholder="123456" maxlength="6" required>
+                    </div>
+
+                    <button type="submit" id="btn-submit-confirm" class="btn btn-primary btn-block">Confirm Account</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>MediBook Cloud Computing Project • AWS us-east-1</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function fillTestAccount(email, password) {
+            document.getElementById("signin-email").value = email;
+            document.getElementById("signin-password").value = password;
+            showTab("signin");
+        }
+
+        function showTab(tabName) {
+            document.getElementById("section-signin").style.display = tabName === "signin" ? "block" : "none";
+            document.getElementById("section-signup").style.display = tabName === "signup" ? "block" : "none";
+            document.getElementById("section-confirm").style.display = tabName === "confirm" ? "block" : "none";
+
+            document.getElementById("tab-btn-signin").className = tabName === "signin" ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm";
+            document.getElementById("tab-btn-signup").className = tabName === "signup" ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm";
+            document.getElementById("tab-btn-confirm").className = tabName === "confirm" ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm";
+            hideAlert();
+        }
+
+        function showAlert(message, type = "danger") {
+            const box = document.getElementById("alert-box");
+            box.className = `alert alert-${type}`;
+            box.textContent = message;
+            box.style.display = "block";
+        }
+
+        function hideAlert() {
+            document.getElementById("alert-box").style.display = "none";
+        }
+
+        // 1. Handle Sign In
+        async function handleSignIn(e) {
+            e.preventDefault();
+            const email = document.getElementById("signin-email").value.trim();
+            const password = document.getElementById("signin-password").value;
+            const submitBtn = document.getElementById("btn-submit-signin");
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Signing In...";
+                hideAlert();
+
+                const user = await authSignIn(email, password);
+                const role = getUserRole();
+
+                showAlert("Sign in successful! Redirecting...", "success");
+
+                setTimeout(() => {
+                    if (role === "admin") {
+                        window.location.href = "admin.html";
+                    } else if (role === "doctor") {
+                        window.location.href = "doctor.html";
+                    } else {
+                        window.location.href = "patient.html";
+                    }
+                }, 600);
+            } catch (err) {
+                showAlert(err.message || "Failed to sign in. Please verify your credentials.", "danger");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign In";
+            }
+        }
+
+        // 2. Handle Sign Up
+        async function handleSignUp(e) {
+            e.preventDefault();
+            const name = document.getElementById("signup-name").value.trim();
+            const email = document.getElementById("signup-email").value.trim();
+            const password = document.getElementById("signup-password").value;
+            const submitBtn = document.getElementById("btn-submit-signup");
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Registering...";
+                hideAlert();
+
+                await authSignUp(email, password, name);
+                document.getElementById("confirm-email").value = email;
+                showTab("confirm");
+                showAlert("Registration submitted! Enter your 6-digit confirmation code (e.g. 123456).", "success");
+            } catch (err) {
+                showAlert(err.message || "Registration failed. Please try a stronger password.", "danger");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Register";
+            }
+        }
+
+        // 3. Handle Confirm Sign Up
+        async function handleConfirmSignUp(e) {
+            e.preventDefault();
+            const email = document.getElementById("confirm-email").value.trim();
+            const code = document.getElementById("confirm-code").value.trim();
+            const submitBtn = document.getElementById("btn-submit-confirm");
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Verifying...";
+                hideAlert();
+
+                await authConfirmSignUp(email, code);
+                document.getElementById("signin-email").value = email;
+                showTab("signin");
+                showAlert("Account confirmed! You can now sign in.", "success");
+            } catch (err) {
+                showAlert(err.message || "Verification failed. Check the code and try again.", "danger");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Confirm Account";
+            }
+        }
+    </script>
+</body>
+</html>

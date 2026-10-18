@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBook - Patient Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span class="logo-icon">🏥</span>
+            <span>MediBook</span>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="patient.html" class="active">Patient Portal</a>
+            <a href="doctor.html">Doctor Portal</a>
+            <a href="admin.html">Admin Dashboard</a>
+            <span id="nav-user-container"></span>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1>🧑‍⚕️ Patient Portal</h1>
+            <p>Find doctors, view real-time availability, schedule consultations, and manage your appointments.</p>
+        </div>
+
+        <!-- Global Alert Message -->
+        <div id="patient-alert" class="alert" style="display: none;"></div>
+
+        <!-- SECTION 1: SEARCH & BOOK APPOINTMENTS -->
+        <div class="card">
+            <h2 class="card-title">Book an Appointment</h2>
+
+            <div class="grid-2">
+                <!-- Filter & Doctor Picker -->
+                <div>
+                    <div class="form-group">
+                        <label class="form-label" for="dept-select">Filter by Department</label>
+                        <select id="dept-select" class="form-control" onchange="onDepartmentChange()">
+                            <option value="">All Departments</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Dermatology">Dermatology</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="doctor-select">Choose Doctor</label>
+                        <select id="doctor-select" class="form-control" onchange="onDoctorChange()">
+                            <option value="">Loading doctors...</option>
+                        </select>
+                    </div>
+
+                    <div id="doctor-info-box" style="display: none; background: #f0f9ff; padding: 1rem; border-radius: 8px; border-left: 4px solid #0284c7; margin-bottom: 1rem;">
+                        <h4 id="doc-info-name" style="color: #0369a1; margin-bottom: 0.25rem;">Doctor Name</h4>
+                        <p id="doc-info-room" style="font-size: 0.85rem; color: #475569; margin-bottom: 0.25rem;">Room</p>
+                        <p id="doc-info-bio" style="font-size: 0.85rem; color: #64748b;">Bio</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="appointment-date">Appointment Date</label>
+                        <input type="date" id="appointment-date" class="form-control" onchange="loadDoctorSlots()">
+                    </div>
+                </div>
+
+                <!-- Available Slots Picker -->
+                <div>
+                    <label class="form-label">Available Time Slots</label>
+                    <div id="slots-loading" style="display: none; color: #64748b; font-size: 0.9rem; padding: 1rem 0;">
+                        Checking available slots...
+                    </div>
+                    <div id="slots-container" class="slots-container">
+                        <span style="color: #94a3b8; font-size: 0.9rem;">Select a doctor and date to view free slots.</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label" for="booking-notes">Reason for Visit / Symptoms (Optional)</label>
+                        <input type="text" id="booking-notes" class="form-control" placeholder="e.g. Mild headache, routine checkup">
+                    </div>
+
+                    <button id="btn-book-slot" class="btn btn-primary btn-block" onclick="bookSelectedSlot()" disabled>
+                        Confirm Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: UPLOAD REFERRAL DOCUMENT -->
+        <div class="card">
+            <h2 class="card-title">Upload Doctor Referral Document (S3 Presigned URL)</h2>
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">
+                Have a doctor's referral letter or lab report? Upload it directly and securely to our private AWS S3 bucket.
+            </p>
+
+            <div class="upload-dropzone" onclick="document.getElementById('referral-file-input').click()">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                <strong>Click to choose a referral document (PDF, PNG, JPG)</strong>
+                <p id="selected-file-label" style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">Maximum size 10MB</p>
+                <input type="file" id="referral-file-input" style="display: none;" onchange="onFileSelected(event)" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+
+            <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+                <button id="btn-upload-referral" class="btn btn-primary btn-sm" onclick="uploadReferralDocument()" disabled>
+                    Upload Document to S3
+                </button>
+                <span id="upload-status-text" style="font-size: 0.85rem; color: #64748b;"></span>
+            </div>
+        </div>
+
+        <!-- SECTION 3: MY APPOINTMENTS -->
+        <div class="card">
+            <div class="card-title">
+                <span>My Scheduled Appointments</span>
+                <button class="btn btn-secondary btn-sm" onclick="loadMyAppointments()">Refresh</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Department</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="my-appointments-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 2rem;">
+                                Loading your appointments...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>MediBook Cloud Computing Project • AWS us-east-1</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/patient.js"></script>
+</body>
+</html>
